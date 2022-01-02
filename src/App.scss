@@ -1,3 +1,25 @@
-.starter {
-  font-size: 18px;
+.App {
+  &__board {
+    display: grid;
+    width: 240px;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 2px;
+  }
+
+  &__cell {
+    width: 20px;
+    height: 20px;
+    background-color: red;
+  }
+
+  &__cell--active {
+    width: 20px;
+    height: 20px;
+    background-color: blue;
+  }
+
+  &__cell--active a {
+    width: 20px;
+    height: 20px;
+  }
 }
