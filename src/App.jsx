@@ -47,7 +47,7 @@ export const App = () => {
       const cells = createBoard(boardSize);
       const activeCell = Math.floor(Math.random() * (boardSize * boardSize));
 
-      cells[activeCell] = <div className="App__cell--active" onClick={handlePlayerClick}></div>;
+      cells[activeCell] = <div className="App__cell App__cell--active" onClick={handlePlayerClick}></div>;
       setBoard(cells);
     }
   };
