@@ -12,6 +12,8 @@ export const App = () => {
   const [computerScore, setComputerScore] = useState(-1);
   const [modalActive, setModalActive] = useState(false);
   const [gameOverMsg, setGameOverMsg] = useState('');
+  const [intermediateResult, setIntermediateResult] = useState(false);
+  const [activeCellID, setActiveCellID] = useState(-1);
 
   const createBoard = (size) => {
     const cells = [];
@@ -38,16 +40,34 @@ export const App = () => {
         return;
       }
 
-      if (!playerClicked) {
-        setComputerScore(computerScore + 1);
+      const cells = createBoard(boardSize);
+
+      if (intermediateResult) {
+        cells[activeCellID] = (
+          <div className={playerClicked
+            ? 'App__cell App__cell--clicked'
+            : 'App__cell App__cell--unclicked'}
+          >
+          </div>
+        );
+
+        setIntermediateResult(false);
+      } else {
+        if (!playerClicked) {
+          setComputerScore(computerScore + 1);
+        }
+
+        setPlayerClicked(false);
+
+        const activeCell = Math.floor(Math.random() * (boardSize * boardSize));
+
+        setActiveCellID(activeCell);
+
+        cells[activeCell] = <div className="App__cell App__cell--active" onClick={handlePlayerClick}></div>;
+
+        setIntermediateResult(true);
       }
 
-      setPlayerClicked(false);
-
-      const cells = createBoard(boardSize);
-      const activeCell = Math.floor(Math.random() * (boardSize * boardSize));
-
-      cells[activeCell] = <div className="App__cell App__cell--active" onClick={handlePlayerClick}></div>;
       setBoard(cells);
     }
   };
@@ -67,7 +87,7 @@ export const App = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [isGameStart, board, playerClicked, playerScore]);
+  }, [isGameStart, board, playerClicked]);
 
   return (
     <div className="App">
@@ -75,12 +95,12 @@ export const App = () => {
         {board.map(cell => cell)}
       </div>
 
-      <form className="App__input" onSubmit={e => e.preventDefault()}>
+      <form className="App__form" onSubmit={e => e.preventDefault()}>
         <input
           type="number"
           className="App__input"
           placeholder="Enter delay time in ms"
-          value={delay === 0 ? "" : delay}
+          value={delay === 0 ? '' : delay}
           onChange={e => setDelay(Number(e.target.value))}
         />
 
@@ -95,12 +115,12 @@ export const App = () => {
 
       {isGameStart && (
         <div className="App__scoreList">
-          playerScore:
+          playerScore:&nbsp;
           {playerScore}
 
           <br />
 
-          computerScore:
+          computerScore:&nbsp;
           {computerScore}
         </div>
       )}
@@ -109,6 +129,7 @@ export const App = () => {
         active={modalActive}
         setActive={setModalActive}
         content={gameOverMsg}
+        reset={boardRefresh}
       />
     </div>
   );
