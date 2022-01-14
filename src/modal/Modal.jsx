@@ -16,6 +16,13 @@ export const Modal = ({ active, setActive, content }) => {
       <div className="Modal__content">
         {content}
       </div>
+
+      <button
+        className="Modal__closeButton"
+        onClick={closeModal}
+      >
+        X
+      </button>
     </div>
   );
 };

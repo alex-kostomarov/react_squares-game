@@ -5,11 +5,11 @@ import { Modal } from './modal/Modal';
 
 export const App = () => {
   const boardSize = 10;
-  const [delay, setDelay] = useState(0);
+  const [delay, setDelay] = useState(1000);
   const [isGameStart, setIsGameStart] = useState(false);
   const [playerScore, setPlayerScore] = useState(0);
-  const [playerClicked, setPlayerClicked] = useState(false);
-  const [computerScore, setComputerScore] = useState(-1);
+  const [playerClicked, setPlayerClicked] = useState(true);
+  const [computerScore, setComputerScore] = useState(0);
   const [modalActive, setModalActive] = useState(false);
   const [gameOverMsg, setGameOverMsg] = useState('');
   const [intermediateResult, setIntermediateResult] = useState(false);
@@ -33,9 +33,6 @@ export const App = () => {
         playerScore > 9 ? setGameOverMsg("You win") : setGameOverMsg("You lose")
         setModalActive(true);
         setIsGameStart(false);
-        setPlayerScore(0);
-        setComputerScore(0);
-        setDelay(0);
 
         return;
       }
@@ -57,8 +54,6 @@ export const App = () => {
           setComputerScore(computerScore + 1);
         }
 
-        setPlayerClicked(false);
-
         const activeCell = Math.floor(Math.random() * (boardSize * boardSize));
 
         setActiveCellID(activeCell);
@@ -68,6 +63,7 @@ export const App = () => {
         setIntermediateResult(true);
       }
 
+      setPlayerClicked(false);
       setBoard(cells);
     }
   };
@@ -81,8 +77,18 @@ export const App = () => {
     setPlayerClicked(true);
   };
 
+  const setSpeed = (event) => {
+    const newDelayValue = event.target.value;
+
+    if (newDelayValue > 0) {
+      setDelay(newDelayValue);
+    }
+  }
+
   useEffect(() => {
-    const interval = setInterval(boardRefresh, delay);
+    const interval = playerClicked
+      ? setInterval(boardRefresh, 0)
+      : setInterval(boardRefresh, delay);
 
     return () => {
       clearInterval(interval);
@@ -96,12 +102,14 @@ export const App = () => {
       </div>
 
       <form className="App__form" onSubmit={e => e.preventDefault()}>
+        <span>Set speed in ms: </span>
+        
         <input
           type="number"
           className="App__input"
           placeholder="Enter delay time in ms"
           value={delay === 0 ? '' : delay}
-          onChange={e => setDelay(Number(e.target.value))}
+          onChange={event => setSpeed(event)}
         />
 
         <button
@@ -113,17 +121,15 @@ export const App = () => {
         </button>
       </form>
 
-      {isGameStart && (
-        <div className="App__scoreList">
-          playerScore:&nbsp;
-          {playerScore}
+      <div className="App__scoreList">
+        playerScore:&nbsp;
+        {playerScore}
 
-          <br />
+        <br />
 
-          computerScore:&nbsp;
-          {computerScore}
-        </div>
-      )}
+        computerScore:&nbsp;
+        {computerScore}
+      </div>
 
       <Modal
         active={modalActive}
